@@ -1,5 +1,7 @@
 import { randomUUID } from "crypto";
-import { Readable, Transform, TransformCallback } from "stream";
+import { Readable, Transform, TransformCallback, Writable } from "stream";
+import { appendFile, createWriteStream, WriteStream } from "fs";
+import path from "path";
 
 class ReadableStream extends Readable {
   _read() {
@@ -22,10 +24,46 @@ class TransformStream extends Transform {
   }
 }
 
+class SetHeaderCsv extends Transform {
+  counter: number = 0;
+  _transform(chunk: any, encoding: BufferEncoding, callback: TransformCallback): void {
+    if (this.counter > 0) {
+      callback(null, chunk);
+      return;
+    }
+
+    this.counter += 1;
+    callback(null, "id,name\n".concat(chunk));
+  }
+}
+
+class WritableStream extends Writable {
+  private _path: string;
+  private _stream: WriteStream;
+  constructor(path: string) {
+    super();
+    this._path = path;
+    this._stream = createWriteStream(this._path, "utf8");
+  }
+  _write(chunk: any, encoding: BufferEncoding, callback: (error?: Error | null | undefined) => void): void {
+    console.log(chunk.toString());
+    this._stream.write(chunk, encoding, err => {
+      if (err) {
+        this.emit("error", err);
+      }
+    });
+
+    callback();
+  }
+}
+
 new ReadableStream()
   .pipe(
     new TransformStream() // Transform stream Faz a transformação dos dados
   )
   .pipe(
-    process.stdout // Writable stream mostra ou escreve os dados gerados no console
+    new SetHeaderCsv() // Define o header do arquivo csv
+  )
+  .pipe(
+    new WritableStream("meu.csv") // Writable stream mostra ou escreve os dados gerados no console
   );
