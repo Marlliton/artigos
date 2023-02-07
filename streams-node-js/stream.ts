@@ -65,5 +65,5 @@ new ReadableStream()
     new SetHeaderCsv() // Define o header do arquivo csv
   )
   .pipe(
-    new WritableStream("meu.csv") // Writable stream mostra ou escreve os dados gerados no console
+    new WritableStream("meu.csv") // Writable stream escreve os dados gerados no arquivo "meu.csv"
   );
