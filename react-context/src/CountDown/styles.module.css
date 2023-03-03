@@ -1,0 +1,28 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  justify-content: center;
+  align-items: center;
+  background-color: #272626;
+
+  height: calc(100vh - 12rem);
+  width: calc(100vw - 20rem);
+}
+
+.countDownWrapper {
+  font-weight: bold;
+  font-size: 10rem;
+  font-family:'Roboto Mono', monospace;;
+  display: flex;
+}
+
+.separator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #00875F;
+
+  width: 4rem;
+  padding: 0 1rem;
+}
